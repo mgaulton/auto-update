@@ -94,9 +94,15 @@ case "$os_name" in
         ;;
     "sparky")
         echo "Installing on Sparky"
-		cp auto-update.service /etc/systemd/system
-		cp auto-update.timer /etc/systemd/system
-		cp -T auto-update.apt /usr/sbin/auto-update
+        cp auto-update.service /etc/systemd/system
+        cp auto-update.timer /etc/systemd/system
+        cp -T auto-update.apt /usr/sbin/auto-update
+        ;;
+    "opensuse-tumblewee")
+        echo "Installing on Tumbleweed"
+        cp auto-update.service /etc/systemd/system
+        cp auto-update.timer /etc/systemd/system
+        cp -T auto-update.zypper /usr/sbin/auto-update
         ;;
     *)
         echo "Unkown operating system"

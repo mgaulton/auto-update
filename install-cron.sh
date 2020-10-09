@@ -82,6 +82,10 @@ case "$os_name" in
         echo "Installing on Sparky"
         cp -T auto-update.apt "$cron_dir/auto-update"
         ;;
+   "opensuse-tumbleweed")
+        echo "Installing on Tumbleweed"
+        cp -T auto-update.zypper "$cron_dir/auto-update"
+        ;;
     *)
         echo "Unkown operating system"
         exit 1
