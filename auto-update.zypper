@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+echo "Updating package list"
+zypper clean  &>/dev/null #--all
+zypper refresh &>/dev/null
+
+if true
+then
+    echo "Purging old packages"
+    zypper packages --orphaned &>/dev/null
+fi
+
+# If no packages are upgradable, then the message is "Last metadata expiration check ...".
+# Otherwise a package name is listed as upgradable.
+needs_update=$(zypper list-updates 2>/dev/null | grep -c -v -E '^No updates found.')
+
+# Only update and reboot if packages are available
+if [[ "$needs_update" -gt 0 ]]
+then
+    echo "Upgrades are available"
+    zypper   --non-interactive up -y &>/dev/null
+    ret_val=$?
+
+    if [[ ("$ret_val" -eq 0) || ("$ret_val" -eq 100) ]]
+    then
+        echo "Upgraded system"
+    else
+        echo "Failed to upgrade system, error $ret_val"
+        exit "$ret_val"
+    fi
+else
+    echo "No system updates"
+fi
+
+if [[ $(needs-rebooting -r &>/dev/null ) -eq 1 ]]
+then
+    echo "Scheduling reboot in 10 minutes"
+    # shutdown -r +10
+    #systemd-run --on-active=10m shutdown -r now
+else
+    echo "No reboot required"
+fi
+
+exit 0
